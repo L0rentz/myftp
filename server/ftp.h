@@ -38,7 +38,6 @@ typedef struct s_ftp_infos {
     int port;
     char *message;
     char buffer[1025];
-    char password[128];
     fd_set readfds;
     struct sockaddr_in address;
     client_control_t *client_list;
@@ -56,5 +55,6 @@ void is_command(ftp_infos_t *ftp);
 void noop(ftp_infos_t *ftp);
 void user(ftp_infos_t *ftp);
 void pass_cmd(ftp_infos_t *ftp);
+void quit(ftp_infos_t *ftp);
 
 #endif /* !FTP_H_ */

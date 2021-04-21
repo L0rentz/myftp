@@ -12,6 +12,7 @@ void push_front_client(client_control_t *client_list, int socket)
     client_list_t *new_node = malloc(sizeof(client_list_t));
     new_node->socket = socket;
     new_node->next = NULL;
+    new_node->quit = 0;
     memset(new_node->pass, '\0', 65);
     memset(new_node->username, '\0', 65);
     new_node->logged = 0;

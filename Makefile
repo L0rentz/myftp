@@ -18,6 +18,7 @@ SRCS_SERVER	=	server/main.c \
 				server/noop_user.c \
 				server/sha256.c \
 				server/sha256_to_string.c \
+				server/quit.c \
 
 SRCS_CLIENT =	client/main.c \
 

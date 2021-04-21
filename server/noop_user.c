@@ -21,7 +21,7 @@ int find_user(FILE *fp, ftp_infos_t *ftp)
     char *to_found = strtok(NULL, delim), *sha256 = NULL;
     if (to_found != NULL) sha256 = sha256_to_string(to_found);
     write(1, "USER", 4);
-    if (sha256) write(1, " ", 1), write(1, sha256, 65);
+    if (sha256) write(1, " ", 1), write(1, sha256, strlen(sha256));
     write(1, "\n", 1);
     while (to_found != NULL && (read = getline(&line, &len, fp)) != -1) {
         token = strtok(line, delim);

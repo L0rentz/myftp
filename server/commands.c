@@ -14,7 +14,7 @@ static const char *const commands[] = {
 };
 
 static void (*func_ptr[])(ftp_infos_t *ftp) = {
-    user, pass_cmd, noop, noop, noop,
+    user, pass_cmd, noop, noop, quit,
     noop, noop, noop, noop, noop,
     noop, noop, noop, noop, NULL
 };

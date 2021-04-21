@@ -18,6 +18,7 @@ typedef struct s_client_list {
     char username[65];
     int logged;
     int exist;
+    int quit;
     struct s_client_list *next;
 } client_list_t;
 
