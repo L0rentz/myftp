@@ -1,0 +1,5 @@
+*.json
+*.o
+myftp
+myclient
+test_ftp.sh
