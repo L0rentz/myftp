@@ -7,11 +7,12 @@
 
 #include "ftp.h"
 
-ftp_infos_t *init_ftp_infos()
+ftp_infos_t *init_ftp_infos(int port, char path[])
 {
     ftp_infos_t *ftp = malloc(sizeof(ftp_infos_t));
     ftp->client_list = init_client_control();
-    ftp->port = PORT;
+    ftp->port = port;
+    ftp->arg_path = strdup(path);
     ftp->opt = TRUE;
     ftp->message = "220 Service ready for new user.\r\n";
     memset(&ftp->sa, '\0', sizeof(ftp->sa));

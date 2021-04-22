@@ -7,25 +7,29 @@
 
 #include "ftp.h"
 
-void noop(ftp_infos_t *ftp)
+void find_user_writer(char *sha256)
 {
-    write(1, "NOOP\n", 5);
-    write(ftp->tmp->socket, "200 Command okay.\r\n", 19);
+    write(1, "USER", 4);
+    if (sha256) {
+        write(1, " ", 1);
+        write(1, sha256, strlen(sha256));
+    }
+    write(1, "\n", 1);
 }
 
 int find_user(FILE *fp, ftp_infos_t *ftp)
 {
     size_t len = 0, check = 0;
     ssize_t read = 0;
-    char *delim = " \n\r", *token = NULL, *line = NULL;
+    char *delim = " \n\r", *token = NULL, *line = NULL, *path = NULL;
     char *to_found = strtok(NULL, delim), *sha256 = NULL;
     if (to_found != NULL) sha256 = sha256_to_string(to_found);
-    write(1, "USER", 4);
-    if (sha256) write(1, " ", 1), write(1, sha256, strlen(sha256));
-    write(1, "\n", 1);
-    while (to_found != NULL && (read = getline(&line, &len, fp)) != -1) {
-        token = strtok(line, delim);
+    find_user_writer(sha256);
+    for (int i = 0; to_found != NULL && (read = getline(&line, &len, fp)) != -1; i++) {
+        path = strtok(line, delim), token = strtok(NULL, delim);
         if (sha256 != NULL && strcmp(token, sha256) == 0) {
+            if (i == 0) ftp->tmp->path = strdup(ftp->arg_path);
+            else ftp->tmp->path = strdup(path);
             snprintf(ftp->tmp->username, strlen(token)+1, "%s", token);
             token = strtok(NULL, delim), check = 1;
             if (token) snprintf(ftp->tmp->pass, strlen(token)+1, "%s", token);
@@ -72,7 +76,7 @@ void pass_compare(char *to_found, ftp_infos_t *ftp)
     write(1, "\n", 1);
 }
 
-void pass_cmd(ftp_infos_t *ftp)
+void pass(ftp_infos_t *ftp)
 {
     if (ftp->tmp->logged == 1) {
         write(ftp->tmp->socket, "230 User already logged in.\r\n", 30);

@@ -16,6 +16,7 @@ typedef struct s_client_list {
     int socket;
     char pass[65];
     char username[65];
+    char *path;
     int logged;
     int exist;
     int quit;

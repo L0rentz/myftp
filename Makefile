@@ -15,10 +15,12 @@ SRCS_SERVER	=	server/main.c \
 				server/core.c \
 				server/signal_handlers.c \
 				server/commands.c \
-				server/noop_user.c \
+				server/user_pass.c \
 				server/sha256.c \
 				server/sha256_to_string.c \
-				server/quit.c \
+				server/list.c \
+				server/error.c \
+				server/noop_quit.c \
 
 SRCS_CLIENT =	client/main.c \
 

@@ -14,9 +14,9 @@ static const char *const commands[] = {
 };
 
 static void (*func_ptr[])(ftp_infos_t *ftp) = {
-    user, pass_cmd, noop, noop, quit,
+    user, pass, noop, noop, quit,
     noop, noop, noop, noop, noop,
-    noop, noop, noop, noop, NULL
+    noop, noop, noop, list, NULL
 };
 
 void is_command(ftp_infos_t *ftp)
@@ -34,6 +34,7 @@ void is_command(ftp_infos_t *ftp)
         }
     }
     if (found == 0) {
+        write(ftp->tmp->socket, "500 Invalid command.\r\n", 22);
         write(1, ftp->buffer, strlen(ftp->buffer));
         write(1, "\n", 1);
     }
