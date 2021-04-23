@@ -26,7 +26,8 @@ int pasv_accept(ftp_infos_t *ftp, int port)
     make_pasv_str(ftp, buf, port);
     dprintf(ftp->tmp->socket, buf);
     if ((ftp->tmp->data_socket = accept(ftp->tmp->master_socket,
-    (struct sockaddr *)&ftp->tmp->address, (socklen_t *)&ftp->tmp->addr_len)) < 0) {
+    (struct sockaddr *)&ftp->tmp->address,
+    (socklen_t *)&ftp->tmp->addr_len)) < 0) {
         perror("\naccept");
         dprintf(ftp->tmp->socket, "425 Can't open data connection.\r\n");
         return (1);

@@ -10,7 +10,8 @@
 static int set_user_path(ftp_infos_t *ftp, int i, char *path)
 {
     char *new_path = path;
-    if (i == 0) new_path = ftp->arg_path;
+    if (i == 0)
+        new_path = ftp->arg_path;
     if (ftp->tmp->path != NULL) {
         free(ftp->tmp->path);
         ftp->tmp->path = NULL;
@@ -23,7 +24,7 @@ static int set_user_path(ftp_infos_t *ftp, int i, char *path)
         perror("\ngetcwd() error");
         dprintf(ftp->tmp->socket, "421 Service not available\r\n");
         return (-1);
-   }
+    }
     ftp->tmp->path = strdup(cwd);
     return (0);
 }

@@ -16,7 +16,7 @@ static int cwd_error_check(ftp_infos_t *ftp, char *token)
         dprintf(ftp->tmp->socket, "550 Failed to change directory.\r\n");
         return (-1);
     }
-   return (0);
+    return (0);
 }
 
 static void cwd_response(ftp_infos_t *ftp, int ret, char *token)
@@ -42,7 +42,7 @@ void cwd(ftp_infos_t *ftp)
         perror("\ngetcwd() error");
         dprintf(ftp->tmp->socket, "421 Service not available\r\n");
         return;
-   }
+    }
     int ret = chdir(ftp->tmp->path);
     ret = chdir(token);
     token = strtok(NULL, " \r\n");
