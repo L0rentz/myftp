@@ -10,10 +10,10 @@
 int check_args(int ac, char **av)
 {
     if (ac == 2 && strcmp(av[1], "-help") == 0) {
-        write(1, "USAGE: ./myftp port path\n"
+        dprintf(1, "USAGE: ./myftp port path\n"
             "       port is the port number on which the server socket "
             "listens\n       path is the path to the home directory for the "
-            "Anonymous user\n", 160);
+            "Anonymous user\n");
         exit(0);
     }
     if (ac != 3) return (-1);

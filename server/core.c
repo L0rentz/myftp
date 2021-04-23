@@ -7,7 +7,7 @@
 
 #include "ftp.h"
 
-void create_fd_set(ftp_infos_t *ftp)
+static void create_fd_set(ftp_infos_t *ftp)
 {
     FD_ZERO(&ftp->readfds);
     FD_SET(ftp->master_socket, &ftp->readfds);
@@ -19,7 +19,7 @@ void create_fd_set(ftp_infos_t *ftp)
     }
 }
 
-void incoming_connection(ftp_infos_t *ftp)
+static void incoming_connection(ftp_infos_t *ftp)
 {
     if (FD_ISSET(ftp->master_socket, &ftp->readfds)) {
         if ((ftp->new_socket = accept(ftp->master_socket,
@@ -30,32 +30,34 @@ void incoming_connection(ftp_infos_t *ftp)
         printf("New connection, socket fd is %d, ip is : %s, port : %d\n",
             ftp->new_socket, inet_ntoa(ftp->address.sin_addr),
             ntohs(ftp->address.sin_port));
-        if (write(ftp->new_socket, ftp->message, strlen(ftp->message))
-        != (ssize_t)strlen(ftp->message))
-            perror("write");
+        if (dprintf(ftp->new_socket, ftp->message)
+        != (ssize_t)strlen(ftp->message)) perror("write");
         puts("Connection message sent successfully");
         push_front_client(ftp->client_list, ftp->new_socket);
         printf("Adding to list of sockets as %d\n", ftp->client_list->count);
     }
 }
 
-void closing_responding(ftp_infos_t *ftp)
+static void closing_responding(ftp_infos_t *ftp)
 {
-    if ((ftp->val_read = read(ftp->tmp->socket, ftp->buffer, 1024)) == 0) {
+    ftp->val_read = read(ftp->tmp->socket, ftp->buffer, 1024);
+    if (ftp->tmp->quit == 0) {
+        ftp->buffer[ftp->val_read] = '\0';
+        is_command(ftp);
+    }
+    if ((ftp->tmp->quit == 1 && ftp->tmp->transfer == 0)
+    || ftp->val_read == 0) {
         getpeername(ftp->tmp->socket, (struct sockaddr *)&ftp->address,
             (socklen_t *)&ftp->addr_len);
         printf("Host disconnected, ip %s, port %d\n",
             inet_ntoa(ftp->address.sin_addr), ntohs(ftp->address.sin_port));
         close(ftp->tmp->socket);
+        if (ftp->tmp->data_socket != 0) close(ftp->tmp->data_socket);
         ftp->tmp->socket = 0;
-    }
-    else {
-        ftp->buffer[ftp->val_read] = '\0';
-        is_command(ftp);
     }
 }
 
-void sockets_operations(ftp_infos_t *ftp)
+static void sockets_operations(ftp_infos_t *ftp)
 {
     for (client_list_t *tmp = ftp->client_list->head;
     tmp != NULL; tmp = tmp->next) {
@@ -70,8 +72,8 @@ void server_loop(ftp_infos_t *ftp)
 {
     while (1) {
         create_fd_set(ftp);
-        ftp->activity =
-            select(ftp->max_sd + 1, &ftp->readfds, NULL, NULL, NULL);
+        ftp->activity = select(ftp->max_sd + 1, &ftp->readfds,
+            NULL, NULL, NULL);
         if ((ftp->activity < 0) && (errno != EINTR)) perror("select");
         incoming_connection(ftp);
         sockets_operations(ftp);

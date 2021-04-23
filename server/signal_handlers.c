@@ -10,6 +10,6 @@
 void sigint_handler(int sig)
 {
     (void)sig;
-    write(1, "\nClosing gracefully...\n", 23);
+    dprintf(1, "\nClosing gracefully...\n");
     longjmp(s_jumpBuffer, 84);
 }

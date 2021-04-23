@@ -14,8 +14,8 @@ static const char *const commands[] = {
 };
 
 static void (*func_ptr[])(ftp_infos_t *ftp) = {
-    user, pass, noop, noop, quit,
-    noop, noop, noop, noop, noop,
+    user, pass, cwd, noop, quit,
+    noop, pwd, pasv, noop, help,
     noop, noop, noop, list, NULL
 };
 
@@ -25,17 +25,14 @@ void is_command(ftp_infos_t *ftp)
     char *token;
     char *delim = " \n\r";
     token = strtok(ftp->buffer, delim);
-    if (token == NULL) return;
-    for (int i = 0; commands[i] != NULL; i++) {
+    if (token != NULL) dprintf(1, token);
+    for (int i = 0; token != NULL && commands[i] != NULL; i++) {
         if (strcmp(commands[i], token) == 0) {
             func_ptr[i](ftp);
             found = 1;
             break;
         }
     }
-    if (found == 0) {
-        write(ftp->tmp->socket, "500 Invalid command.\r\n", 22);
-        write(1, ftp->buffer, strlen(ftp->buffer));
-        write(1, "\n", 1);
-    }
+    if (found == 0) dprintf(ftp->tmp->socket, "500 Invalid command.\r\n");
+    dprintf(1, "\n");
 }

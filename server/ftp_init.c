@@ -41,7 +41,7 @@ static void bind_listen(ftp_infos_t *ftp)
 
 void init_ftp_server(ftp_infos_t *ftp)
 {
-    signal(SIGPIPE, SIG_IGN);
+    signal(SIGPIPE, SIG_IGN), signal(SIGCHLD, SIG_IGN);
     if ((ftp->master_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket failed");
         longjmp(s_jumpBuffer, 84);

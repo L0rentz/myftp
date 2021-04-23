@@ -20,6 +20,12 @@
 #include <sys/time.h>
 #include <sys/poll.h>
 
+typedef struct s_data_socket {
+    int port;
+    int socket;
+    struct sockaddr_in addr;
+} data_socket_t;
+
 typedef struct s_client_infos {
     int port;
     int ret;
@@ -28,6 +34,9 @@ typedef struct s_client_infos {
     struct pollfd fds;
     struct sockaddr_in serv_addr;
     char buffer[1025];
+    data_socket_t data_socket;
 } client_infos_t;
+
+void parse_buffer(client_infos_t *client);
 
 #endif /* !CLIENT_H_ */

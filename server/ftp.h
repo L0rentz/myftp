@@ -21,6 +21,7 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <dirent.h>
+#include <linux/limits.h>
 
 #include "client_list.h"
 #include "sha256.h"
@@ -57,11 +58,16 @@ void server_loop(ftp_infos_t *ftp);
 void sigint_handler(int sig);
 void is_command(ftp_infos_t *ftp);
 int check_args(int ac, char **av);
+void select_data_transfer(ftp_infos_t *ftp);
 
 void noop(ftp_infos_t *ftp);
 void user(ftp_infos_t *ftp);
 void pass(ftp_infos_t *ftp);
 void quit(ftp_infos_t *ftp);
 void list(ftp_infos_t *ftp);
+void pasv(ftp_infos_t *ftp);
+void help(ftp_infos_t *ftp);
+void pwd(ftp_infos_t *ftp);
+void cwd(ftp_infos_t *ftp);
 
 #endif /* !FTP_H_ */

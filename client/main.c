@@ -31,10 +31,13 @@ client_infos_t *init_client_infos(char **av)
         free(client);
         exit(84);
     }
+    memset(client->buffer, '\0', 1025);
     client->fds.fd = 1;
-	client->fds.events = POLLIN;
+    client->fds.events = POLLIN;
     client->ret = 0;
     client->socket = 0;
+    client->data_socket.socket = 0;
+    client->data_socket.port = 0;
     client->val_read = 0;
     return (client);
 }
@@ -51,7 +54,7 @@ void connect_to_server(client_infos_t *client, char **av)
     printf("Connected to %s.\n", av[1]);
     client->val_read = read(client->socket, client->buffer, 1024);
     if (client->val_read != 0)
-        write(1, client->buffer, strlen(client->buffer));
+        dprintf(1, client->buffer);
 }
 
 int server_read_write(client_infos_t *client, int fd_read,
@@ -59,18 +62,20 @@ int server_read_write(client_infos_t *client, int fd_read,
 {
     client->fds.fd = fd_read;
     client->ret = poll(&client->fds, 1, timeout);
-	if (client->ret == -1) {
-	    perror("poll");
-	    free(client);
+    if (client->ret == -1) {
+        perror("poll");
+        free(client);
         exit(84);
-	}
+    }
     memset(client->buffer, '\0', 1024);
     if (client->ret > 0)
         client->val_read = read(fd_read, client->buffer, 1024);
     client->buffer[client->val_read] = '\0';
-    write(fd_write, client->buffer, strlen(client->buffer));
-    if (client->ret > 0)
+    dprintf(fd_write, client->buffer);
+    if (client->ret > 0) {
+        parse_buffer(client);
         return (-1);
+    }
     return (0);
 }
 
@@ -84,6 +89,9 @@ int main(int ac, char **av)
     while (1) {
         server_read_write(client, 1, client->socket, timeout);
         server_read_write(client, client->socket, 1, timeout);
+        if (client->data_socket.socket != 0) {
+            server_read_write(client, client->data_socket.socket, 1, timeout);
+        }
     }
     return (0);
 }

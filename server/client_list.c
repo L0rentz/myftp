@@ -11,13 +11,18 @@ void push_front_client(client_control_t *client_list, int socket)
 {
     client_list_t *new_node = malloc(sizeof(client_list_t));
     new_node->socket = socket;
+    new_node->data_socket = 0;
+    new_node->master_socket = 0;
     new_node->next = NULL;
     new_node->path = NULL;
     new_node->quit = 0;
+    new_node->exist = 0;
+    new_node->transfer = 0;
+    new_node->mode = NONE;
     memset(new_node->pass, '\0', 65);
     memset(new_node->username, '\0', 65);
     new_node->logged = 0;
-    new_node->exist = 0;
+    new_node->user_cmd = 0;
     if (client_list->head != NULL) new_node->next = client_list->head;
     client_list->head = new_node;
     client_list->count++;
@@ -75,7 +80,7 @@ void print_clients_sockets(client_list_t **head)
     }
 }
 
-client_control_t *init_client_control()
+client_control_t *init_client_control(void)
 {
     client_control_t *client_list = malloc(sizeof(client_control_t));
     client_list->head = NULL;
