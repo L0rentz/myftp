@@ -53,7 +53,9 @@ static void closing_responding(ftp_infos_t *ftp)
             inet_ntoa(ftp->address.sin_addr), ntohs(ftp->address.sin_port));
         close(ftp->tmp->socket);
         if (ftp->tmp->data_socket != 0) close(ftp->tmp->data_socket);
-        ftp->tmp->socket = 0;
+        if (ftp->tmp->master_socket != 0) close(ftp->tmp->master_socket);
+        ftp->tmp->socket = 0, ftp->tmp->data_socket = 0;
+        ftp->tmp->master_socket = 0;
     }
 }
 
@@ -63,6 +65,12 @@ static void sockets_operations(ftp_infos_t *ftp)
     tmp != NULL; tmp = tmp->next) {
         if (FD_ISSET(tmp->socket, &ftp->readfds)) {
             ftp->tmp = tmp;
+            if (waitpid(ftp->tmp->pid, NULL, WNOHANG) > 0) {
+                printf("lenny\n");
+                close(tmp->master_socket);
+                close(tmp->data_socket);
+                tmp->transfer = 0;
+            }
             closing_responding(ftp);
         }
     }

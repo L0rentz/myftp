@@ -8,43 +8,46 @@
 #include "ftp.h"
 
 static const char help_buf[] =
-    "USER <SP> <username> <CRLF>   : Specify user for authentication\n"
-    "PASS <SP> <password> <CRLF>   : Specify password for authentication\n"
-    "CWD  <SP> <pathname> <CRLF>   : Change working directory\n"
-    "CDUP <CRLF>                   : Change working directory to parent "
+    "214\tUSER <SP> <username> <CRLF>   : Specify user for authentication\n"
+    "\tPASS <SP> <password> <CRLF>   : Specify password for authentication\n"
+    "\tCWD  <SP> <pathname> <CRLF>   : Change working directory\n"
+    "\tCDUP <CRLF>                   : Change working directory to parent "
     "directory\n"
-    "QUIT <CRLF>                   : Disconnection\n"
-    "DELE <SP> <pathname> <CRLF>   : Delete file on the server\n"
-    "PWD  <CRLF>                   : Print working directory\n"
-    "PASV <CRLF>                   : Enable \"passive\" mode for data "
+    "\tQUIT <CRLF>                   : Disconnection\n"
+    "\tDELE <SP> <pathname> <CRLF>   : Delete file on the server\n"
+    "\tPWD  <CRLF>                   : Print working directory\n"
+    "\tPASV <CRLF>                   : Enable \"passive\" mode for data "
     "transfer\n"
-    "PORT <SP> <host-port> <CRLF>  : Enable \"active\" mode for data "
+    "\tPORT <SP> <host-port> <CRLF>  : Enable \"active\" mode for data "
     "transfer\n"
-    "HELP [<SP> <string>] <CRLF>   : List available commands\n"
-    "NOOP <CRLF>                   : Do nothing\n"
-    "RETR <SP> <pathname> <CRLF>   : Download file from server to client\n"
-    "STOR <SP> <pathname> <CRLF>   : Upload file from client to server\n"
-    "LIST [<SP> <pathname>] <CRLF> : List files in the current working "
+    "\tHELP [<SP> <string>] <CRLF>   : List available commands\n"
+    "\tNOOP <CRLF>                   : Do nothing\n"
+    "\tRETR <SP> <pathname> <CRLF>   : Download file from server to client\n"
+    "\tSTOR <SP> <pathname> <CRLF>   : Upload file from client to server\n"
+    "\tLIST [<SP> <pathname>] <CRLF> : List files in the current working "
     "directory\r\n";
 
 static const char *const help_arr[] = {
-    "USER <SP> <username> <CRLF>   : Specify user for authentication\r\n",
-    "PASS <SP> <password> <CRLF>   : Specify password for authentication\r\n",
-    "CWD  <SP> <pathname> <CRLF>   : Change working directory\r\n",
-    "CDUP <CRLF>                   : Change working directory to parent "
+    "214\tUSER <SP> <username> <CRLF>   : Specify user for authentication\r\n",
+    "214\tPASS <SP> <password> <CRLF>   : Specify password for "
+    "authentication\r\n",
+    "214\tCWD  <SP> <pathname> <CRLF>   : Change working directory\r\n",
+    "214\tCDUP <CRLF>                   : Change working directory to parent "
     "directory\r\n",
-    "QUIT <CRLF>                   : Disconnection\r\n",
-    "DELE <SP> <pathname> <CRLF>   : Delete file on the server\r\n",
-    "PWD  <CRLF>                   : Print working directory\r\n",
-    "PASV <CRLF>                   : Enable \"passive\" mode for data "
+    "214\tQUIT <CRLF>                   : Disconnection\r\n",
+    "214\tDELE <SP> <pathname> <CRLF>   : Delete file on the server\r\n",
+    "214\tPWD  <CRLF>                   : Print working directory\r\n",
+    "214\tPASV <CRLF>                   : Enable \"passive\" mode for data "
     "transfer\r\n",
-    "PORT <SP> <host-port> <CRLF>  : Enable \"active\" mode for data "
+    "214\tPORT <SP> <host-port> <CRLF>  : Enable \"active\" mode for data "
     "transfer\r\n",
-    "HELP [<SP> <string>] <CRLF>   : List available commands\r\n",
-    "NOOP <CRLF>                   : Do nothing\r\n",
-    "RETR <SP> <pathname> <CRLF>   : Download file from server to client\r\n",
-    "STOR <SP> <pathname> <CRLF>   : Upload file from client to server\r\n",
-    "LIST [<SP> <pathname>] <CRLF> : List files in the current working "
+    "214\tHELP [<SP> <string>] <CRLF>   : List available commands\r\n",
+    "214\tNOOP <CRLF>                   : Do nothing\r\n",
+    "214\tRETR <SP> <pathname> <CRLF>   : Download file from server to "
+    "client\r\n",
+    "214\tSTOR <SP> <pathname> <CRLF>   : Upload file from client to "
+    "server\r\n",
+    "214\tLIST [<SP> <pathname>] <CRLF> : List files in the current working "
     "directory\r\n",
     NULL
 };
@@ -70,14 +73,13 @@ void help(ftp_infos_t *ftp)
         dprintf(ftp->tmp->socket, "530 Please login with USER and PASS.\r\n");
         return;
     }
-    dprintf(ftp->tmp->socket, "214 Help message.\r\n");
     if (token == NULL) {
         dprintf(ftp->tmp->socket, help_buf);
         return;
     }
     size_t len = strlen(token);
     for (int i = 0; help_arr[i] != NULL; i++) {
-        if (strncmp(token, help_arr[i], len) == 0) {
+        if (strncmp(token, (help_arr[i] + 4), len) == 0) {
             dprintf(ftp->tmp->socket, help_arr[i]);
             return;
         }

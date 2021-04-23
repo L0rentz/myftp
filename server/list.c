@@ -32,8 +32,8 @@ static int list_check_path(ftp_infos_t *ftp, char *token)
 
 static void list_fork(ftp_infos_t *ftp, int check, char *token)
 {
-    pid_t pid = fork();
-    if (pid != 0) return;
+    ftp->tmp->pid = fork();
+    if (ftp->tmp->pid != 0) return;
     FILE *fp = NULL;
     if (check > 0) {
         char command[strlen(ftp->tmp->path) + strlen(token) + 5];
@@ -68,6 +68,7 @@ void list(ftp_infos_t *ftp)
     }
     int check = list_check_path(ftp, token);
     if (check < 0) return;
+    ftp->tmp->transfer = 1;
     list_fork(ftp, check, token);
     ftp->tmp->mode = NONE;
 }

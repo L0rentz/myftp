@@ -83,7 +83,7 @@ static void pass_compare(char *to_found, ftp_infos_t *ftp)
         dprintf(ftp->tmp->socket, "230 User logged in, proceed.\r\n");
     } else if (ftp->tmp->user_cmd == 1) {
         ftp->tmp->user_cmd = 0;
-        dprintf(ftp->tmp->socket, "430 Login incorrect.\r\n");
+        dprintf(ftp->tmp->socket, "530 Login incorrect.\r\n");
     }
 }
 

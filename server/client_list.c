@@ -15,6 +15,7 @@ void push_front_client(client_control_t *client_list, int socket)
     new_node->master_socket = 0;
     new_node->next = NULL;
     new_node->path = NULL;
+    new_node->pid = 0;
     new_node->quit = 0;
     new_node->exist = 0;
     new_node->transfer = 0;

@@ -68,6 +68,9 @@ void pasv(ftp_infos_t *ftp)
         dprintf(ftp->tmp->socket, "425 Can't open data connection.\r\n");
         return;
     }
+    int enable = 1;
+    setsockopt(ftp->tmp->master_socket, SOL_SOCKET, SO_REUSEADDR,
+        &enable, sizeof(int));
     ftp->tmp->address.sin_family = AF_INET;
     ftp->tmp->address.sin_addr.s_addr = INADDR_ANY;
     if (pasv_bind_port_listen(ftp) == 1) return;
