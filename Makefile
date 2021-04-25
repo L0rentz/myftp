@@ -1,6 +1,6 @@
 ##
 ## EPITECH PROJECT, 2021
-## B-PSU-402-NCE-4-1-strace-marton.szuts
+## B-NWP-400-NCE-4-1-myftp-lorentz-andrea.romeo
 ## File description:
 ## Makefile
 ##
@@ -25,10 +25,12 @@ SRCS_SERVER	=	server/main.c \
 				server/cwd_cdup.c \
 				server/port.c \
 				server/retr.c \
+				server/stor.c \
 
 SRCS_CLIENT =	client/main.c \
 				client/parse_buffer.c \
 				client/port.c \
+				client/stor.c \
 
 OBJS_SERVER	=	$(SRCS_SERVER:.c=.o)
 

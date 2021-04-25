@@ -16,7 +16,7 @@ static const char *const commands[] = {
 static void (*func_ptr[])(ftp_infos_t *ftp) = {
     user, pass, cwd, cdup, quit,
     dele, pwd, pasv, port, help,
-    noop, retr, noop, list, NULL
+    noop, retr, stor, list, NULL
 };
 
 void is_command(ftp_infos_t *ftp)

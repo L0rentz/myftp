@@ -74,5 +74,6 @@ void cwd(ftp_infos_t *ftp);
 void dele(ftp_infos_t *ftp);
 void port(ftp_infos_t *ftp);
 void retr(ftp_infos_t *ftp);
+void stor(ftp_infos_t *ftp);
 
 #endif /* !FTP_H_ */

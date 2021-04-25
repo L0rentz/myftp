@@ -38,7 +38,8 @@ static void retr_fork(ftp_infos_t *ftp, char *token)
     char path[strlen(token) + strlen(ftp->tmp->path) + 1];
     path[0] = '\0', strcat(path, ftp->tmp->path), strcat(path, "/");
     strcat(path, token);
-    int fd = open(path, O_RDONLY), valread = 0;
+    int fd = open(path, O_RDONLY);
+    ssize_t valread = 0;
     char buf[1025] = {0};
     while (fd != -1 && (valread = read(fd, buf, 1024)) > 0) {
         buf[valread] = '\0';

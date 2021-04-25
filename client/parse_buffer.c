@@ -26,7 +26,7 @@ static void pasv_get_ip_port(client_infos_t *client, char *buf)
     client->data_socket.port = atoi(port1) * 256 + atoi(port2);
 }
 
-static void pasv_connect(client_infos_t *client)
+void pasv_connect(client_infos_t *client)
 {
     if ((client->data_socket.socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("Socket creation error\n");
@@ -46,12 +46,27 @@ static void pasv_connect(client_infos_t *client)
     }
 }
 
-void parse_buffer(client_infos_t *client)
+void data_transfer_selector(client_infos_t *client, int timeout)
 {
-    if (strncmp(client->buffer, "227", 3) == 0)
-        pasv_connect(client);
+    if (client->data_socket.socket != 0) {
+        if (client->state == STOR && strncmp(client->buffer, "150", 3) == 0)
+            stor_send(client);
+        else if (client->state != STOR)
+            server_read_write(client, client->data_socket.socket, 1, timeout);
+    }
+}
+
+int parse_buffer(client_infos_t *client)
+{
+    printf("%d %d\n", client->state, client->sending);
     if (strncmp(client->buffer, "221", 3) == 0) {
         free(client);
         exit(0);
     }
+    if (client->sending == 0 && client->state != STOR
+    && strncmp(client->buffer, "STOR", 4) == 0) {
+        client->state = STOR;
+        return (stor_check(client));
+    }
+    return (0);
 }

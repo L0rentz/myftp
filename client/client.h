@@ -19,6 +19,12 @@
 #include <netinet/in.h>
 #include <sys/time.h>
 #include <sys/poll.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+#define NONE 0
+#define STOR 1
+#define RETR 2
 
 typedef struct s_data_socket {
     int port;
@@ -33,13 +39,22 @@ typedef struct s_client_infos {
     int ret;
     int socket;
     int val_read;
+    int sending;
+    int fd_send;
+    int state;
     struct pollfd fds;
     struct sockaddr_in serv_addr;
     char buffer[1025];
     data_socket_t data_socket;
 } client_infos_t;
 
-void parse_buffer(client_infos_t *client);
+int parse_buffer(client_infos_t *client);
 int port_open(client_infos_t *client, int *check);
+void stor_send(client_infos_t *client);
+void data_transfer_selector(client_infos_t *client, int timeout);
+int server_read_write(client_infos_t *client, int fd_read,
+    int fd_write, int timeout);
+int stor_check(client_infos_t *client);
+void pasv_connect(client_infos_t *client);
 
 #endif /* !CLIENT_H_ */
