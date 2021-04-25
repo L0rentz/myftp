@@ -50,6 +50,19 @@ void cwd(ftp_infos_t *ftp)
     chdir(cwd);
 }
 
+static void cdup_response(ftp_infos_t *ftp, int ret, char *success)
+{
+    if (ret == -1)
+        dprintf(ftp->tmp->socket, "550 Failed to change directory.\r\n");
+    else {
+        char new_path[PATH_MAX] = {0};
+        if (ftp->tmp->path != NULL)
+            free(ftp->tmp->path), ftp->tmp->path = NULL;
+        ftp->tmp->path = strdup(getcwd(new_path, sizeof(new_path)));
+        dprintf(ftp->tmp->socket, "%s\r\n", success);
+    }
+}
+
 void cdup(ftp_infos_t *ftp)
 {
     char cwd[PATH_MAX] = {0};
@@ -62,7 +75,6 @@ void cdup(ftp_infos_t *ftp)
     }
     int ret = chdir(ftp->tmp->path);
     ret = chdir(token);
-    token = strtok(NULL, " \r\n");
-    cwd_response(ftp, ret, token, "200 Directory successfully changed.");
+    cdup_response(ftp, ret, "250 Directory successfully changed.");
     chdir(cwd);
 }

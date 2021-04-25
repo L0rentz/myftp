@@ -37,13 +37,13 @@ static void list_fork(ftp_infos_t *ftp, int check, char *token)
     FILE *fp = NULL;
     if (check > 0) {
         char command[strlen(ftp->tmp->path) + strlen(token) + 5];
-        command[0] = '\0', strcat(command, "ls ");
+        command[0] = '\0', strcat(command, "ls -l ");
         strcat(command, ftp->tmp->path), strcat(command, "/");
         strcat(command, token), fp = popen(command, "r");
     } else {
         char command[strlen(ftp->tmp->path) + 4];
         command[0] = '\0';
-        strcat(command, "ls "), strcat(command, ftp->tmp->path);
+        strcat(command, "ls -l "), strcat(command, ftp->tmp->path);
         fp = popen(command, "r");
     }
     char buf[1024];

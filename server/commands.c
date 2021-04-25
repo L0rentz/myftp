@@ -16,7 +16,7 @@ static const char *const commands[] = {
 static void (*func_ptr[])(ftp_infos_t *ftp) = {
     user, pass, cwd, cdup, quit,
     dele, pwd, pasv, port, help,
-    noop, noop, noop, list, NULL
+    noop, retr, noop, list, NULL
 };
 
 void is_command(ftp_infos_t *ftp)
@@ -25,7 +25,7 @@ void is_command(ftp_infos_t *ftp)
     char *token;
     char *delim = " \n\r";
     token = strtok(ftp->buffer, delim);
-    if (token != NULL) dprintf(1, token);
+    if (token != NULL) write(1, token, strlen(token));
     for (; token != NULL && commands[i] != NULL; i++) {
         if (strcmp(commands[i], token) == 0) {
             func_ptr[i](ftp);

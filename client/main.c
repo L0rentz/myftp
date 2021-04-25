@@ -71,8 +71,8 @@ static int server_read_write(client_infos_t *client, int fd_read,
     int check = 0;
     if (fd_read == 1 && strncmp(client->buffer, "PORT", 4) == 0)
         if (port_open(client, &check) == -1) return (-1);
-    if (check == 0) dprintf(fd_write, client->buffer);
     if (client->ret > 0) {
+        if (check == 0) write(fd_write, client->buffer, client->val_read);
         parse_buffer(client);
         return (-1);
     } return (0);

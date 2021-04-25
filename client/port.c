@@ -33,10 +33,10 @@ static int port_bind_listen_accept(client_infos_t *client, int *check)
 {
     if (bind(client->data_socket.master_socket, (struct sockaddr *)
     &client->data_socket.addr, sizeof(client->data_socket.addr)) < 0) {
-        perror("\nBind failed");
+        perror("Bind failed");
         return (-1);
     } if (listen(client->data_socket.master_socket, 1) < 0) {
-        perror("\nlisten failed");
+        perror("listen failed");
         return (-1);
     } client->data_socket.addr_len = sizeof(client->data_socket.addr);
     dprintf(client->socket, client->buffer);
@@ -44,7 +44,7 @@ static int port_bind_listen_accept(client_infos_t *client, int *check)
     if ((client->data_socket.socket = accept(client->data_socket.master_socket,
     (struct sockaddr *)&client->data_socket.addr,
     (socklen_t *)&client->data_socket.addr_len)) < 0) {
-        perror("\naccept");
+        perror("accept");
         return (-1);
     } return (0);
 }
@@ -86,7 +86,7 @@ int port_open(client_infos_t *client, int *check)
     if ((client->data_socket.master_socket =
     socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         if (tmp != NULL) free(tmp);
-        perror("\nsocket failed");
+        perror("socket failed");
         return (-1);
     }
     int ret = port_init(client, check);

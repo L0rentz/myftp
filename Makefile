@@ -24,6 +24,7 @@ SRCS_SERVER	=	server/main.c \
 				server/pasv.c \
 				server/cwd_cdup.c \
 				server/port.c \
+				server/retr.c \
 
 SRCS_CLIENT =	client/main.c \
 				client/parse_buffer.c \

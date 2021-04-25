@@ -22,6 +22,7 @@
 #include <setjmp.h>
 #include <dirent.h>
 #include <linux/limits.h>
+#include <fcntl.h>
 
 #include "client_list.h"
 #include "sha256.h"
@@ -72,5 +73,6 @@ void pwd(ftp_infos_t *ftp);
 void cwd(ftp_infos_t *ftp);
 void dele(ftp_infos_t *ftp);
 void port(ftp_infos_t *ftp);
+void retr(ftp_infos_t *ftp);
 
 #endif /* !FTP_H_ */
