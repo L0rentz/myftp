@@ -31,7 +31,9 @@ typedef struct s_client_list {
     int exist;
     int quit;
     int addr_len;
+    int invited;
     pid_t pid;
+    FILE *fstream;
     struct sockaddr_in address;
     struct s_client_list *next;
 } client_list_t;

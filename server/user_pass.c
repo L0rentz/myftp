@@ -10,9 +10,10 @@
 static int set_user_path(ftp_infos_t *ftp, int i, char *path)
 {
     char *new_path = path;
-    if (i == 0)
+    if (i == 0) {
         new_path = ftp->arg_path;
-    if (ftp->tmp->path != NULL) {
+        ftp->tmp->invited = 1;
+    } if (ftp->tmp->path != NULL) {
         free(ftp->tmp->path);
         ftp->tmp->path = NULL;
     }
@@ -40,9 +41,10 @@ static int find_user(FILE *fp, ftp_infos_t *ftp, char *delim, char *to_found)
         path = strtok(line, delim), token = strtok(NULL, delim);
         if (sha256 != NULL && strcmp(token, sha256) == 0) {
             if (set_user_path(ftp, i, path) == -1) break;
-            snprintf(ftp->tmp->username, strlen(token)+1, "%s", token);
+            snprintf(ftp->tmp->username, strlen(token) + 1, "%s", token);
             token = strtok(NULL, delim), check = 1;
-            if (token) snprintf(ftp->tmp->pass, strlen(token)+1, "%s", token);
+            if (token)
+                snprintf(ftp->tmp->pass, strlen(token) + 1, "%s", token);
             break;
         } i++;
     }
@@ -77,8 +79,8 @@ void user(ftp_infos_t *ftp)
 
 static void pass_compare(char *to_found, ftp_infos_t *ftp)
 {
-    if (ftp->tmp->exist == 1 && strcmp(ftp->tmp->pass, to_found) == 0
-    && ftp->tmp->user_cmd == 1) {
+    if ((ftp->tmp->exist == 1 && ftp->tmp->user_cmd == 1)
+    && (strcmp(ftp->tmp->pass, to_found) == 0 || ftp->tmp->invited == 1)) {
         ftp->tmp->logged = 1;
         dprintf(ftp->tmp->socket, "230 User logged in, proceed.\r\n");
     } else if (ftp->tmp->user_cmd == 1) {

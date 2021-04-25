@@ -19,7 +19,7 @@ static int cwd_error_check(ftp_infos_t *ftp, char *token)
     return (0);
 }
 
-static void cwd_response(ftp_infos_t *ftp, int ret, char *token)
+static void cwd_response(ftp_infos_t *ftp, int ret, char *token, char *success)
 {
     if (ret == -1 || token != NULL)
         dprintf(ftp->tmp->socket, "550 Failed to change directory.\r\n");
@@ -28,7 +28,7 @@ static void cwd_response(ftp_infos_t *ftp, int ret, char *token)
         if (ftp->tmp->path != NULL)
             free(ftp->tmp->path), ftp->tmp->path = NULL;
         ftp->tmp->path = strdup(getcwd(new_path, sizeof(new_path)));
-        dprintf(ftp->tmp->socket, "250 Directory successfully changed.\r\n");
+        dprintf(ftp->tmp->socket, "%s\r\n", success);
     }
 }
 
@@ -46,6 +46,23 @@ void cwd(ftp_infos_t *ftp)
     int ret = chdir(ftp->tmp->path);
     ret = chdir(token);
     token = strtok(NULL, " \r\n");
-    cwd_response(ftp, ret, token);
+    cwd_response(ftp, ret, token, "250 Directory successfully changed.");
+    chdir(cwd);
+}
+
+void cdup(ftp_infos_t *ftp)
+{
+    char cwd[PATH_MAX] = {0};
+    char *token = "..";
+    if (cwd_error_check(ftp, token) == -1) return;
+    if (getcwd(cwd, sizeof(cwd)) == NULL) {
+        perror("\ngetcwd() error");
+        dprintf(ftp->tmp->socket, "421 Service not available\r\n");
+        return;
+    }
+    int ret = chdir(ftp->tmp->path);
+    ret = chdir(token);
+    token = strtok(NULL, " \r\n");
+    cwd_response(ftp, ret, token, "200 Directory successfully changed.");
     chdir(cwd);
 }

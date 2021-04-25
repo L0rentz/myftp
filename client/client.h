@@ -23,7 +23,9 @@
 typedef struct s_data_socket {
     int port;
     int socket;
+    int master_socket;
     struct sockaddr_in addr;
+    int addr_len;
 } data_socket_t;
 
 typedef struct s_client_infos {
@@ -38,5 +40,6 @@ typedef struct s_client_infos {
 } client_infos_t;
 
 void parse_buffer(client_infos_t *client);
+int port_open(client_infos_t *client, int *check);
 
 #endif /* !CLIENT_H_ */

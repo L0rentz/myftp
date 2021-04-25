@@ -20,12 +20,14 @@ SRCS_SERVER	=	server/main.c \
 				server/sha256_to_string.c \
 				server/list.c \
 				server/error.c \
-				server/noop_quit_help_pwd.c \
+				server/noop_quit_help_pwd_dele.c \
 				server/pasv.c \
-				server/cwd.c \
+				server/cwd_cdup.c \
+				server/port.c \
 
 SRCS_CLIENT =	client/main.c \
 				client/parse_buffer.c \
+				client/port.c \
 
 OBJS_SERVER	=	$(SRCS_SERVER:.c=.o)
 

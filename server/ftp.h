@@ -38,12 +38,12 @@ typedef struct s_ftp_infos {
     int addr_len;
     int new_socket;
     int activity;
-    int val_read;
     int max_sd;
     int port;
     char *message;
     char *arg_path;
-    char buffer[1025];
+    char *buffer;
+    ssize_t val_read;
     fd_set readfds;
     struct sockaddr_in address;
     client_control_t *client_list;
@@ -60,6 +60,7 @@ void is_command(ftp_infos_t *ftp);
 int check_args(int ac, char **av);
 void select_data_transfer(ftp_infos_t *ftp);
 
+void cdup(ftp_infos_t *ftp);
 void noop(ftp_infos_t *ftp);
 void user(ftp_infos_t *ftp);
 void pass(ftp_infos_t *ftp);
@@ -69,5 +70,7 @@ void pasv(ftp_infos_t *ftp);
 void help(ftp_infos_t *ftp);
 void pwd(ftp_infos_t *ftp);
 void cwd(ftp_infos_t *ftp);
+void dele(ftp_infos_t *ftp);
+void port(ftp_infos_t *ftp);
 
 #endif /* !FTP_H_ */

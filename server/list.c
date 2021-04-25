@@ -63,7 +63,7 @@ void list(ftp_infos_t *ftp)
         dprintf(ftp->tmp->socket, "530 Please login with USER and PASS.\r\n");
         return;
     } else if (ftp->tmp->mode == NONE) {
-        dprintf(ftp->tmp->socket, "425 Use PORT or PASV first.\r\n");
+        dprintf(ftp->tmp->socket, "421 Use PORT or PASV first.\r\n");
         return;
     }
     int check = list_check_path(ftp, token);

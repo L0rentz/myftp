@@ -14,6 +14,7 @@ ftp_infos_t *init_ftp_infos(int port, char path[])
     ftp->port = port;
     ftp->arg_path = strdup(path);
     ftp->opt = TRUE;
+    ftp->buffer = NULL;
     ftp->message = "220 Service ready for new user.\r\n";
     memset(&ftp->sa, '\0', sizeof(ftp->sa));
     sigemptyset(&ftp->sa.sa_mask);
@@ -42,8 +43,7 @@ static void bind_listen(ftp_infos_t *ftp)
 void init_ftp_server(ftp_infos_t *ftp)
 {
     signal(SIGPIPE, SIG_IGN);
-    //signal(SIGCHLD, SIG_IGN);
-    if ((ftp->master_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+    if ((ftp->master_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket failed");
         longjmp(s_jumpBuffer, 84);
     }

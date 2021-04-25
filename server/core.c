@@ -40,13 +40,14 @@ static void incoming_connection(ftp_infos_t *ftp)
 
 static void closing_responding(ftp_infos_t *ftp)
 {
-    ftp->val_read = read(ftp->tmp->socket, ftp->buffer, 1024);
-    if (ftp->tmp->quit == 0) {
+    size_t len = 0;
+    ftp->val_read = getline(&ftp->buffer, &len, ftp->tmp->fstream);
+    if (ftp->val_read != -1 && ftp->tmp->quit == 0) {
         ftp->buffer[ftp->val_read] = '\0';
         is_command(ftp);
     }
     if ((ftp->tmp->quit == 1 && ftp->tmp->transfer == 0)
-    || ftp->val_read == 0) {
+    || ftp->val_read == -1) {
         getpeername(ftp->tmp->socket, (struct sockaddr *)&ftp->address,
             (socklen_t *)&ftp->addr_len);
         printf("Host disconnected, ip %s, port %d\n",
@@ -57,6 +58,7 @@ static void closing_responding(ftp_infos_t *ftp)
         ftp->tmp->socket = 0, ftp->tmp->data_socket = 0;
         ftp->tmp->master_socket = 0;
     }
+    if (ftp->buffer != NULL) free(ftp->buffer), ftp->buffer = NULL;
 }
 
 static void sockets_operations(ftp_infos_t *ftp)
@@ -66,7 +68,6 @@ static void sockets_operations(ftp_infos_t *ftp)
         if (FD_ISSET(tmp->socket, &ftp->readfds)) {
             ftp->tmp = tmp;
             if (waitpid(ftp->tmp->pid, NULL, WNOHANG) > 0) {
-                printf("lenny\n");
                 close(tmp->master_socket);
                 close(tmp->data_socket);
                 tmp->transfer = 0;

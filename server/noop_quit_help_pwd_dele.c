@@ -93,7 +93,27 @@ void pwd(ftp_infos_t *ftp)
         return;
     }
     if (ftp->tmp->path != NULL)
-        dprintf(ftp->tmp->socket, "257 \"%s\"\r\n", ftp->tmp->path);
+        dprintf(ftp->tmp->socket, "257 %s\r\n", ftp->tmp->path);
     else
-        dprintf(ftp->tmp->socket, "421 Service not available\r\n");
+        dprintf(ftp->tmp->socket, "421 Service not available.\r\n");
+}
+
+void dele(ftp_infos_t *ftp)
+{
+    if (ftp->tmp->logged == 0) {
+        dprintf(ftp->tmp->socket, "530 Please login with USER and PASS.\r\n");
+        return;
+    }
+    char *token = strtok(NULL, " \r\n");
+    if (token != NULL) dprintf(1, " %s", token);
+    else {
+        dprintf(ftp->tmp->socket, "550 Permission denied.\r\n");
+        return;
+    }
+    int ret = remove(token);
+    if (ret == 0)
+        dprintf(ftp->tmp->socket, "250 \"%s\" successfully deleted\r\n",
+            token);
+    else
+        dprintf(ftp->tmp->socket, "550 Permission denied.\r\n");
 }

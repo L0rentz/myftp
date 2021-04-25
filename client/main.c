@@ -7,7 +7,7 @@
 
 #include "client.h"
 
-void init_client_socket(client_infos_t *client, char **av)
+static void init_client_socket(client_infos_t *client, char **av)
 {
     if ((client->socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("Socket creation error\n");
@@ -23,7 +23,7 @@ void init_client_socket(client_infos_t *client, char **av)
     }
 }
 
-client_infos_t *init_client_infos(char **av)
+static client_infos_t *init_client_infos(char **av)
 {
     client_infos_t *client = malloc(sizeof(client_infos_t));
     client->port = atoi(av[2]);
@@ -34,15 +34,14 @@ client_infos_t *init_client_infos(char **av)
     memset(client->buffer, '\0', 1025);
     client->fds.fd = 1;
     client->fds.events = POLLIN;
-    client->ret = 0;
-    client->socket = 0;
-    client->data_socket.socket = 0;
-    client->data_socket.port = 0;
+    client->ret = 0, client->socket = 0, client->data_socket.addr_len = 0;
+    client->data_socket.socket = 0, client->data_socket.port = 0;
+    client->data_socket.master_socket = 0;
     client->val_read = 0;
     return (client);
 }
 
-void connect_to_server(client_infos_t *client, char **av)
+static void connect_to_server(client_infos_t *client, char **av)
 {
     printf("Trying %s...\n", av[1]);
     if (connect(client->socket, (struct sockaddr *)&client->serv_addr,
@@ -57,26 +56,26 @@ void connect_to_server(client_infos_t *client, char **av)
         dprintf(1, client->buffer);
 }
 
-int server_read_write(client_infos_t *client, int fd_read,
+static int server_read_write(client_infos_t *client, int fd_read,
     int fd_write, int timeout)
 {
     client->fds.fd = fd_read;
     client->ret = poll(&client->fds, 1, timeout);
     if (client->ret == -1) {
-        perror("poll");
-        free(client);
+        perror("poll"), free(client);
         exit(84);
-    }
-    memset(client->buffer, '\0', 1024);
+    } memset(client->buffer, '\0', 1024);
     if (client->ret > 0)
         client->val_read = read(fd_read, client->buffer, 1024);
     client->buffer[client->val_read] = '\0';
-    dprintf(fd_write, client->buffer);
+    int check = 0;
+    if (fd_read == 1 && strncmp(client->buffer, "PORT", 4) == 0)
+        if (port_open(client, &check) == -1) return (-1);
+    if (check == 0) dprintf(fd_write, client->buffer);
     if (client->ret > 0) {
         parse_buffer(client);
         return (-1);
-    }
-    return (0);
+    } return (0);
 }
 
 int main(int ac, char **av)

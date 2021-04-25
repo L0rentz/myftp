@@ -7,7 +7,7 @@
 
 #include "client.h"
 
-void pasv_get_ip_port(client_infos_t *client, char *buf)
+static void pasv_get_ip_port(client_infos_t *client, char *buf)
 {
     char *token = strtok(client->buffer, "(");
     token = strtok(NULL, ",");
@@ -26,7 +26,7 @@ void pasv_get_ip_port(client_infos_t *client, char *buf)
     client->data_socket.port = atoi(port1) * 256 + atoi(port2);
 }
 
-void pasv_connect(client_infos_t *client)
+static void pasv_connect(client_infos_t *client)
 {
     if ((client->data_socket.socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("Socket creation error\n");

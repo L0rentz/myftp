@@ -17,8 +17,8 @@ int main(int ac, char **av)
     if (sigaction(SIGINT, &ftp->sa, NULL) == -1) {
         perror("sigaction");
         return (84);
-    }
-    if ((val = setjmp(s_jumpBuffer))) {
+    } if ((val = setjmp(s_jumpBuffer))) {
+        if (ftp->buffer != NULL) free(ftp->buffer), ftp->buffer = NULL;
         clean_client_control(ftp->client_list);
         free(ftp->arg_path), free(ftp);
         return (val);

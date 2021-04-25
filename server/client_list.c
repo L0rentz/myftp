@@ -11,19 +11,15 @@ void push_front_client(client_control_t *client_list, int socket)
 {
     client_list_t *new_node = malloc(sizeof(client_list_t));
     new_node->socket = socket;
-    new_node->data_socket = 0;
-    new_node->master_socket = 0;
-    new_node->next = NULL;
-    new_node->path = NULL;
-    new_node->pid = 0;
-    new_node->quit = 0;
-    new_node->exist = 0;
+    new_node->data_socket = 0, new_node->master_socket = 0;
+    new_node->next = NULL, new_node->path = NULL;
+    new_node->pid = 0, new_node->invited = 0;
+    new_node->quit = 0, new_node->exist = 0;
     new_node->transfer = 0;
     new_node->mode = NONE;
-    memset(new_node->pass, '\0', 65);
-    memset(new_node->username, '\0', 65);
-    new_node->logged = 0;
-    new_node->user_cmd = 0;
+    memset(new_node->pass, '\0', 65), memset(new_node->username, '\0', 65);
+    new_node->logged = 0, new_node->user_cmd = 0;
+    new_node->fstream = fdopen(new_node->socket, "r");
     if (client_list->head != NULL) new_node->next = client_list->head;
     client_list->head = new_node;
     client_list->count++;
@@ -35,7 +31,7 @@ void pop_disconnected_clients(client_control_t *client_list)
     while (tmp != NULL && tmp->socket == 0) {
         tmp = tmp->next;
         if (client_list->head->path != NULL) free(client_list->head->path);
-        free(client_list->head);
+        fclose(client_list->head->fstream), free(client_list->head);
         client_list->head = tmp;
         client_list->count--;
     }
@@ -45,7 +41,7 @@ void pop_disconnected_clients(client_control_t *client_list)
             to_delete = tmp->next;
             tmp->next = to_delete->next;
             if (to_delete->path != NULL) free(to_delete->path);
-            free(to_delete);
+            fclose(to_delete->fstream), free(to_delete);
             client_list->count--;
         }
     }
@@ -60,12 +56,12 @@ client_control_t *clean_client_control(client_control_t *client_list)
         to_delete = tmp;
         tmp = tmp->next;
         if (to_delete->path != NULL) free(to_delete->path);
-        free(to_delete);
+        fclose(to_delete->fstream), free(to_delete);
         client_list->count--;
     }
     if (tmp != NULL) {
         if (tmp->path) free(tmp->path);
-        free(tmp);
+        fclose(tmp->fstream), free(tmp);
         client_list->count--;
         client_list->head = NULL;
     }

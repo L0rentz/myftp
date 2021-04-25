@@ -29,7 +29,7 @@ int pasv_accept(ftp_infos_t *ftp, int port)
     (struct sockaddr *)&ftp->tmp->address,
     (socklen_t *)&ftp->tmp->addr_len)) < 0) {
         perror("\naccept");
-        dprintf(ftp->tmp->socket, "425 Can't open data connection.\r\n");
+        dprintf(ftp->tmp->socket, "421 Can't open data connection.\r\n");
         return (1);
     }
     return (0);
@@ -46,11 +46,11 @@ int pasv_bind_port_listen(ftp_infos_t *ftp)
     }
     if (port > 65535) {
         perror("\nbind failed");
-        dprintf(ftp->tmp->data_socket, "425 Can't open data connection.\r\n");
+        dprintf(ftp->tmp->data_socket, "421 Can't open data connection.\r\n");
         return (1);
     } if (listen(ftp->tmp->master_socket, 1) < 0) {
         perror("\nlisten");
-        dprintf(ftp->tmp->socket, "425 Can't open data connection.\r\n");
+        dprintf(ftp->tmp->socket, "421 Can't open data connection.\r\n");
         return (1);
     }
     return (pasv_accept(ftp, port));
@@ -63,9 +63,9 @@ void pasv(ftp_infos_t *ftp)
     if (ftp->tmp->logged == 0) {
         dprintf(ftp->tmp->socket, "530 Please login with USER and PASS.\r\n");
         return;
-    } if ((ftp->tmp->master_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+    } if ((ftp->tmp->master_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("\nsocket failed");
-        dprintf(ftp->tmp->socket, "425 Can't open data connection.\r\n");
+        dprintf(ftp->tmp->socket, "421 Can't open data connection.\r\n");
         return;
     }
     int enable = 1;
