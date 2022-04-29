@@ -20,7 +20,14 @@ The server is able to handle several clients at the same time by using select fo
   
 The server has an authentication with an Anonymous account and an empty password.  
 Data transfers uses active or passive mode.  
+  
 I've also implemented a SHA256 encryption for the passwords.
+
+``` FTP DB example :
+    PATH e7a8aa2df7e5d0b233da615af4e7fef148bec39aef1709da0a80391ad0316563
+    users/c7fdfa83f5b95928f5eb2065e8c87222edd8d3cf5b55b20edad10c2a43fbbaaf c7fdfa83f5b95928f5eb2065e8c87222edd8d3cf5b55b20edad10c2a43fbbaaf bf038251c59b434b02c7279047808368f1ee0a6ee2ab98799158edb05b2eb4d6
+```
+Where path is the path for the files storage, than the credentials in SHA256.
 
 ## Client
 
