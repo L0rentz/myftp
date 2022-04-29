@@ -20,6 +20,7 @@ The server is able to handle several clients at the same time by using select fo
   
 The server has an authentication with an Anonymous account and an empty password.  
 Data transfers uses active or passive mode.  
+I've also implemented a SHA256 encryption for the passwords.
 
 ## Client
 
